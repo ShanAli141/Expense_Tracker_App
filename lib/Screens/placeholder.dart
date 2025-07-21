@@ -6,6 +6,6 @@ class PlaceholderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text(title, style: const TextStyle(fontSize: 24)));
+    return Scaffold();
   }
 }
