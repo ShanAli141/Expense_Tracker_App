@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class ManageExpense extends StatefulWidget {
@@ -10,6 +11,6 @@ class ManageExpense extends StatefulWidget {
 class _ManageExpenseState extends State<ManageExpense> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold();
   }
 }
