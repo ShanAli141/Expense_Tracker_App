@@ -1,0 +1,12 @@
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  errors:
+    deprecated_member_use: ignore
+    sort_child_properties_last: ignore
+
+linter:
+  rules:
+    # Add or remove lint rules here
+    # avoid_print: false
+    # prefer_single_quotes: true
