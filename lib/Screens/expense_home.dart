@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_string_escapes, unnecessary_brace_in_string_interps
 
 import 'package:first_project/Bloc/expense_cubit.dart';
+import 'package:first_project/Screens/manage_expense.dart' show ManageExpense;
 import 'package:first_project/Screens/placeholder.dart';
 import 'package:first_project/Screens/profile_screen.dart';
 import 'package:first_project/Widgets/main_screen.dart';
@@ -23,10 +24,8 @@ class _ExpenseHomeState extends State<ExpenseHome> {
     const MainScreen(), // Main list screen
     const PlaceholderScreen(title: 'Reports'),
     const ProfileScreen(title: 'Settings'),
+    const ManageExpense(title: 'Manage'),
   ];
-  testing() {
-    const ab = "Testing";
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -57,6 +56,8 @@ class _ExpenseHomeState extends State<ExpenseHome> {
         selectedItemColor: Colors.blue,
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Manage'),
+
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
             label: 'Reports',
