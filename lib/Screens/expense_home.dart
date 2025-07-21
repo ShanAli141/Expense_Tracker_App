@@ -24,6 +24,9 @@ class _ExpenseHomeState extends State<ExpenseHome> {
     const PlaceholderScreen(title: 'Reports'),
     const ProfileScreen(title: 'Settings'),
   ];
+  testing() {
+    const ab = "Testing";
+  }
 
   void _onItemTapped(int index) {
     setState(() {
