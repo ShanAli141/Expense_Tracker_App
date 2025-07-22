@@ -1,3 +1,4 @@
+import 'package:first_project/Hive%20Model/budget_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive/hive.dart';
@@ -5,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:first_project/main.dart';
-import 'package:first_project/Hive Model/hive_expense_model.dart';
+import 'package:first_project/Hive%20Model/expense.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -15,6 +16,7 @@ void main() {
     final dir = await getApplicationDocumentsDirectory();
     Hive.init(dir.path);
     Hive.registerAdapter(ExpenseAdapter());
+    Hive.registerAdapter(BudgetModelAdapter());
 
     // Open the Hive box
     final expenseBox = await Hive.openBox<Expense>('expenses');

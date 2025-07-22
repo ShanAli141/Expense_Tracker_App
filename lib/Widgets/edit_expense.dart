@@ -1,4 +1,4 @@
-import 'package:first_project/Hive%20Model/hive_expense_model.dart';
+import 'package:first_project/Hive%20Model/expense.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseEditScreen extends StatefulWidget {

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'hive_expense_model.dart';
+part of 'expense.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

@@ -1,5 +1,7 @@
 // ignore_for_file: unnecessary_string_escapes, unnecessary_brace_in_string_interps
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/Bloc/expense_cubit.dart';
 import 'package:first_project/Screens/manage_expense.dart' show ManageExpense;
 import 'package:first_project/Screens/placeholder.dart';
@@ -18,13 +20,14 @@ class ExpenseHome extends StatefulWidget {
 
 class _ExpenseHomeState extends State<ExpenseHome> {
   int _selectedIndex = 0;
-
+  double budget = 0;
+  double totalExpenses = 0;
   // Define bottom nav pages/screens
   final List<Widget> _pages = [
-    const MainScreen(), // Main list screen
+    const MainScreen(),
+    const ManageExpense(title: 'Manage'), // Main list screen
     const PlaceholderScreen(title: 'Reports'),
     const ProfileScreen(title: 'Settings'),
-    const ManageExpense(title: 'Manage'),
   ];
 
   void _onItemTapped(int index) {
@@ -36,7 +39,9 @@ class _ExpenseHomeState extends State<ExpenseHome> {
   @override
   void initState() {
     super.initState();
-    context.read<ExpenseCubit>().loadExpenses(); // Load from Hive
+    context.read<ExpenseCubit>().loadExpenses();
+    checkBudgetUsage();
+    // Load from Hive
   }
 
   @override
@@ -54,9 +59,18 @@ class _ExpenseHomeState extends State<ExpenseHome> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.blueGrey,
+        selectedIconTheme: IconThemeData(size: 30),
+        unselectedIconTheme: IconThemeData(size: 24),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Manage'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.note_alt_sharp),
+            label: 'Manage',
+          ),
 
           BottomNavigationBarItem(
             icon: Icon(Icons.pie_chart),
@@ -81,6 +95,50 @@ class _ExpenseHomeState extends State<ExpenseHome> {
             )
           : null,
     );
+  }
+
+  Future<void> checkBudgetUsage() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userDoc = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .get();
+
+    final double userBudget = (userDoc.data()?['monthlyBudget'] ?? 0)
+        .toDouble();
+
+    final expensesSnap = await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('expenses')
+        .get();
+
+    double total = 0;
+    for (var doc in expensesSnap.docs) {
+      total += (doc.data()['amount'] ?? 0).toDouble();
+    }
+
+    if (mounted) {
+      setState(() {
+        budget = userBudget;
+        totalExpenses = total;
+      });
+    }
+    final double usedPercent = (total / userBudget) * 100;
+
+    if (usedPercent >= 80 && mounted) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text("Budget Limit Alert"),
+          content: Text(
+            "You've used ${usedPercent.toStringAsFixed(1)}% of your monthly budget.",
+          ),
+        ),
+      );
+    }
   }
 }
 

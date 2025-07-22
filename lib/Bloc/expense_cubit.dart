@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
-import 'package:first_project/Hive%20Model/hive_expense_model.dart';
+import 'package:first_project/Hive%20Model/expense.dart';
+import 'package:first_project/Notification%20System/budget_checker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -80,7 +81,10 @@ class ExpenseCubit extends Cubit<ExpenseState> {
         emit(ExpenseError("User not logged in"));
         return;
       }
+
       print("Adding expense for user: ${user.uid}");
+
+      // Step 1: Add to Firestore
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
@@ -92,9 +96,16 @@ class ExpenseCubit extends Cubit<ExpenseState> {
             'date': expense.date.toIso8601String(),
           });
       print("Expense added to Firestore");
+
+      // Step 2: Add to Hive (local storage)
       await _expenseBox.add(expense);
       print("Expense added to Hive");
+
+      // Step 3: Reload local expenses
       loadExpenses();
+
+      // ✅ Step 4: Check budget and notify if needed
+      await checkBudgetAndNotify(user.uid);
     } catch (e) {
       print("Add expense error: $e");
       emit(ExpenseError("Failed to add expense: $e"));
