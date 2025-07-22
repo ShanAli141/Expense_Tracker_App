@@ -1,11 +1,21 @@
 import 'package:first_project/Bloc/expense_cubit.dart';
-import 'package:first_project/Hive%20Model/hive_expense_model.dart';
+import 'package:first_project/Hive%20Model/expense.dart';
+import 'package:first_project/Notification%20System/work_manager.dart';
 import 'package:first_project/Widgets/edit_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:workmanager/workmanager.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class MainScreen extends StatelessWidget {
+class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
+
+  @override
+  State<MainScreen> createState() => _MainScreenState();
+}
+
+class _MainScreenState extends State<MainScreen> {
+  bool _taskScheduled = false;
 
   @override
   Widget build(BuildContext context) {
@@ -14,6 +24,23 @@ class MainScreen extends StatelessWidget {
         if (state is ExpenseLoading) {
           return const Center(child: CircularProgressIndicator());
         } else if (state is ExpenseLoaded) {
+          if (!_taskScheduled) {
+            _taskScheduled = true;
+
+            final String? userId = FirebaseAuth.instance.currentUser?.uid;
+            if (userId != null) {
+              Workmanager().registerOneOffTask(
+                WorkmanagerService.taskName,
+                WorkmanagerService.taskName,
+                inputData: {'uid': userId},
+              );
+            } else {
+              debugPrint(
+                "User not signed in - cannot register background task.",
+              );
+            }
+          }
+
           return SafeArea(
             child: Column(
               children: [

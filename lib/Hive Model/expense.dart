@@ -2,7 +2,7 @@
 
 import 'package:hive/hive.dart';
 
-part 'hive_expense_model.g.dart';
+part 'expense.g.dart';
 
 @HiveType(typeId: 0)
 class Expense extends HiveObject {

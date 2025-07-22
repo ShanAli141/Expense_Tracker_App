@@ -1,4 +1,3 @@
-
 plugins {
     // Other plugins if any...
     id("com.google.gms.google-services") version "4.4.3" apply false
@@ -11,6 +10,17 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+    }
+
+    configurations.all {
+        resolutionStrategy {
+            // You can try either of these strategies:
+            // Option 1: Force latest version
+            force("com.google.firebase:firebase-iid:21.1.0")
+
+            // Option 2: Exclude to avoid duplicates
+            exclude("com.google.firebase", "firebase-iid")
+        }
     }
 }
 

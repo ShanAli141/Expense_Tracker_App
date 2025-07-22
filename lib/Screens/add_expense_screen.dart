@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:first_project/Bloc/expense_cubit.dart';
-import 'package:first_project/Hive%20Model/hive_expense_model.dart';
+import 'package:first_project/Hive%20Model/expense.dart';
 import 'package:first_project/Screens/expense_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
