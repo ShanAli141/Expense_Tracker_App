@@ -3,9 +3,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/Bloc/expense_cubit.dart';
+import 'package:first_project/Screens/Profile/profile_screen.dart';
 import 'package:first_project/Screens/manage_expense.dart' show ManageExpense;
 import 'package:first_project/Screens/placeholder.dart';
-import 'package:first_project/Screens/profile_screen.dart';
 import 'package:first_project/Widgets/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

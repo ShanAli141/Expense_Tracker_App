@@ -12,7 +12,7 @@ Future<void> checkBudgetAndNotify(String uid) async {
     }
 
     final double monthlyBudget = (snapshot['monthlyBudget'] as num).toDouble();
-    final String? lastStatus = snapshot.data()!['lastBudgetStatus'];
+    String? lastStatus = snapshot.data()!['lastBudgetStatus'];
 
     final expensesSnapshot = await userDocRef.collection('expenses').get();
     double totalSpent = 0;
@@ -24,24 +24,30 @@ Future<void> checkBudgetAndNotify(String uid) async {
 
     final double spentPercentage = (totalSpent / monthlyBudget) * 100;
 
-    if (spentPercentage >= 100 && lastStatus != 'exceeded') {
-      await NotificationHelper.showNotification(
-        'Budget Exceeded',
-        'You have exceeded your budget limit!',
-      );
-      await userDocRef.update({'lastBudgetStatus': 'exceeded'});
-    } else if (spentPercentage >= 80 &&
-        spentPercentage < 100 &&
-        lastStatus != 'warning') {
-      await NotificationHelper.showNotification(
-        'Budget Alert',
-        'You’ve used ${spentPercentage.toStringAsFixed(1)}% of your budget.',
-      );
-      await userDocRef.update({'lastBudgetStatus': 'warning'});
-    } else if (spentPercentage < 80 && lastStatus != 'under') {
-      // Optional: Reset the status if user comes back under budget
-      await userDocRef.update({'lastBudgetStatus': 'under'});
+    if (spentPercentage >= 100) {
+      if (lastStatus != 'exceeded') {
+        await NotificationHelper.showNotification(
+          'Budget Exceeded',
+          'You have exceeded your budget limit!',
+        );
+        lastStatus = 'exceeded';
+      }
+    } else if (spentPercentage >= 80) {
+      if (lastStatus != 'warning') {
+        await NotificationHelper.showNotification(
+          'Budget Alert',
+          'You’ve used ${spentPercentage.toStringAsFixed(1)}% of your budget.',
+        );
+        lastStatus = 'warning';
+      }
+    } else {
+      if (lastStatus != 'under') {
+        lastStatus = 'under';
+      }
     }
+
+    // Always update the latest status
+    await userDocRef.update({'lastBudgetStatus': lastStatus});
   } catch (e) {
     print("Error in budget notification: $e");
   }
