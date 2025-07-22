@@ -13,31 +13,31 @@ import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:firebase_messaging/firebase_messaging.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 //Notification Handler
-Future<void> setupPushNotifications() async {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
+// Future<void> setupPushNotifications() async {
+//   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-  await messaging.requestPermission();
+//   await messaging.requestPermission();
 
-  String? token = await messaging.getToken();
-  print("FCM Token: $token");
+//   String? token = await messaging.getToken();
+//   print("FCM Token: $token");
 
-  // Save token to Firestore under the user's document
-  final user = FirebaseAuth.instance.currentUser;
-  if (user != null && token != null) {
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-      'fcmToken': token,
-    });
-  }
+//   // Save token to Firestore under the user's document
+//   final user = FirebaseAuth.instance.currentUser;
+//   if (user != null && token != null) {
+//     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+//       'fcmToken': token,
+//     });
+//   }
 
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    print('Message received in foreground: ${message.notification?.title}');
-  });
-}
+//   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+//     print('Message received in foreground: ${message.notification?.title}');
+//   });
+// }
 
 Future<void> requestNotificationPermission() async {
   final status = await Permission.notification.status;
@@ -94,9 +94,9 @@ class MyApp extends StatelessWidget {
 
   Widget _handleAuth(AsyncSnapshot<User?> snapshot) {
     if (snapshot.connectionState == ConnectionState.waiting) {
-      return const SplashScreen(); // Show splash or loading spinner
+      return const SplashScreen();
     } else if (snapshot.hasData) {
-      return const BudgetNotifierWrapper(); // <-- updated here
+      return const BudgetNotifierWrapper();
     } else {
       return LoginScreen(); // Not logged in
     }
