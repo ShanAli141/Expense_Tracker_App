@@ -5,7 +5,7 @@ import 'package:first_project/Screens/Profile/remittance_certificate.dart';
 import 'package:first_project/Screens/Profile/reward_screen.dart';
 import 'package:flutter/material.dart';
 import 'profile_option_tile.dart';
-import 'package:first_project/Screens/Profile/verification_screen.dart';
+//import 'package:first_project/Screens/Sumsub%20Verification/verification_screen.dart';
 import 'package:first_project/Screens/Profile/language_screen.dart';
 import 'package:first_project/Screens/Profile/support_screen.dart';
 
@@ -22,16 +22,16 @@ class ProfileOptions extends StatelessWidget {
       title: const Text('Profile', style: TextStyle(color: Colors.black)),
       collapsedIconColor: const Color.fromARGB(255, 71, 112, 189),
       children: [
-        ProfileOptionTile(
-          icon: Icons.verified_user,
-          label: 'Document Verification',
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const VerificationScreen()),
-            );
-          },
-        ),
+        // ProfileOptionTile(
+        //   icon: Icons.verified_user,
+        //   label: 'Document Verification',
+        //   onTap: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(builder: (_) => const DocVerification()),
+        //     );
+        //   },
+        // ),
         ProfileOptionTile(
           icon: Icons.share,
           label: 'Refer a Friend',
