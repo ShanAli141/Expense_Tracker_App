@@ -33,6 +33,7 @@ android {
 
     buildTypes {
         release {
+            
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")
@@ -46,10 +47,10 @@ flutter {
 dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.16.0"))
     implementation("com.google.firebase:firebase-analytics")
-    
-    implementation("com.google.firebase:firebase-messaging") {
-    exclude(group = "com.google.firebase", module = "firebase-iid")
-}
+    implementation("com.google.firebase:firebase-messaging")
+
+    implementation("com.google.firebase:firebase-iid:20.3.0")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }
+
