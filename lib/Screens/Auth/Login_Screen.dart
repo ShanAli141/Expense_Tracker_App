@@ -2,12 +2,15 @@
 
 import 'package:first_project/Screens/Auth/Signup_Screen.dart';
 import 'package:first_project/Screens/expense_home.dart';
+import 'package:first_project/l10n/app_localizations.dart'
+    show AppLocalizations;
 import 'package:flutter/material.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final void Function(Locale)? setLocale;
+  const LoginScreen({super.key, this.setLocale});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -57,51 +60,104 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  Future<void> _authenticate(BuildContext context) async {
-    try {
-      bool canCheckBiometrics = await auth.canCheckBiometrics;
-      bool isDeviceSupported = await auth.isDeviceSupported();
-      List<BiometricType> availableBiometrics = await auth
-          .getAvailableBiometrics();
+  // Future<void> _authenticate(BuildContext context) async {
+  //   try {
+  //     bool canCheckBiometrics = await auth.canCheckBiometrics;
+  //     bool isDeviceSupported = await auth.isDeviceSupported();
+  //     List<BiometricType> availableBiometrics = await auth
+  //         .getAvailableBiometrics();
 
-      if (!canCheckBiometrics ||
-          !isDeviceSupported ||
-          availableBiometrics.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('No biometric data enrolled on this device'),
-            backgroundColor: Colors.red,
-          ),
-        );
-        return;
-      }
+  //     if (!canCheckBiometrics ||
+  //         !isDeviceSupported ||
+  //         availableBiometrics.isEmpty) {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(
+  //           content: Text('No biometric data enrolled on this device'),
+  //           backgroundColor: Colors.red,
+  //         ),
+  //       );
+  //       return;
+  //     }
 
-      bool isAuthenticated = await auth.authenticate(
-        localizedReason: 'Scan your fingerprint to login',
-        options: const AuthenticationOptions(
-          biometricOnly: true,
-          stickyAuth: true,
-        ),
-      );
+  //     bool isAuthenticated = await auth.authenticate(
+  //       localizedReason: 'Scan your fingerprint to login',
+  //       options: const AuthenticationOptions(
+  //         biometricOnly: true,
+  //         stickyAuth: true,
+  //       ),
+  //     );
 
-      if (isAuthenticated && context.mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const ExpenseHome()),
-          );
-        });
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Authentication failed: $e';
-      });
-    }
-  }
+  //     if (isAuthenticated && context.mounted) {
+  //       WidgetsBinding.instance.addPostFrameCallback((_) {
+  //         Navigator.pushReplacement(
+  //           context,
+  //           MaterialPageRoute(builder: (context) => const ExpenseHome()),
+  //         );
+  //       });
+  //     }
+  //   } catch (e) {
+  //     setState(() {
+  //       _errorMessage = 'Authentication failed: $e';
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blue.shade100,
+        title: const SizedBox(), // remove center title
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: IconButton(
+            icon: const Icon(Icons.dark_mode, size: 30),
+            onPressed: () {
+              // TODO: Add dark mode toggle
+            },
+          ),
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 12),
+            child: Builder(
+              builder: (context) => IconButton(
+                icon: const Icon(Icons.language, size: 30),
+                onPressed: () async {
+                  final selected = await showDialog<Locale>(
+                    context: context,
+                    builder: (context) => SimpleDialog(
+                      title: Text(AppLocalizations.of(context)!.selectLanguage),
+                      children: [
+                        SimpleDialogOption(
+                          child: const Text('English'),
+                          onPressed: () =>
+                              Navigator.pop(context, const Locale('en')),
+                        ),
+                        SimpleDialogOption(
+                          child: const Text('اردو'),
+                          onPressed: () =>
+                              Navigator.pop(context, const Locale('ur')),
+                        ),
+                        SimpleDialogOption(
+                          child: const Text('French'),
+                          onPressed: () =>
+                              Navigator.pop(context, const Locale('fr')),
+                        ),
+                      ],
+                    ),
+                  );
+
+                  if (selected != null) {
+                    widget.setLocale?.call(selected);
+                  }
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -145,9 +201,9 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ),
                         ),
-                      const Text(
-                        'Sign In',
-                        style: TextStyle(
+                      Text(
+                        AppLocalizations.of(context)!.signin,
+                        style: const TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,
@@ -184,7 +240,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 onChanged: (value) {},
                                 activeColor: Colors.blue,
                               ),
-                              const Text('Remember me'),
+                              Text(AppLocalizations.of(context)!.rememberMe),
                             ],
                           ),
                           TextButton(
@@ -202,16 +258,17 @@ class _LoginScreenState extends State<LoginScreen>
                                 });
                               }
                             },
-                            child: const Text(
-                              'Signup',
-                              style: TextStyle(color: Colors.blue),
+                            child: Text(
+                              AppLocalizations.of(context)!.signUp,
+                              style: const TextStyle(color: Colors.blue),
                             ),
                           ),
                         ],
                       ),
                       const SizedBox(height: 20),
+                      //=========Login Button=====================
                       AnimatedScaleButton(
-                        text: 'Log In',
+                        text: AppLocalizations.of(context)!.logIn,
                         onPressed: () async {
                           try {
                             final email = emailController.text.trim();
@@ -243,15 +300,46 @@ class _LoginScreenState extends State<LoginScreen>
                           }
                         },
                       ),
-                      const SizedBox(height: 10),
-                      AnimatedScaleButton(
-                        text: 'Login with Fingerprint',
-                        icon: const Icon(
-                          Icons.fingerprint,
-                          color: Colors.white,
-                        ),
-                        onPressed: () => _authenticate(context),
-                      ),
+                      const SizedBox(height: 20),
+                      //======Language Button===============================
+                      // AnimatedScaleButton(
+                      //   text: AppLocalizations.of(context)!.selectLanguage,
+                      //   onPressed: () async {
+                      //     final selected = await showDialog<Locale>(
+                      //       context: context,
+                      //       builder: (context) => SimpleDialog(
+                      //         title: const Text('Choose Language'),
+                      //         children: [
+                      //           SimpleDialogOption(
+                      //             child: const Text('English'),
+                      //             onPressed: () => Navigator.pop(
+                      //               context,
+                      //               const Locale('en'),
+                      //             ),
+                      //           ),
+                      //           SimpleDialogOption(
+                      //             child: const Text('اردو'),
+                      //             onPressed: () => Navigator.pop(
+                      //               context,
+                      //               const Locale('ur'),
+                      //             ),
+                      //           ),
+                      //           SimpleDialogOption(
+                      //             child: const Text('French'),
+                      //             onPressed: () => Navigator.pop(
+                      //               context,
+                      //               const Locale('fr'),
+                      //             ),
+                      //           ),
+                      //         ],
+                      //       ),
+                      //     );
+
+                      //     if (selected != null) {
+                      //       widget.setLocale?.call(selected);
+                      //     }
+                      //   },
+                      // ),
                     ],
                   ),
                 ),

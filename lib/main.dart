@@ -1,43 +1,21 @@
 import 'package:first_project/Bloc/budget_cubit.dart';
 import 'package:first_project/Bloc/expense_cubit.dart';
-import 'package:first_project/Hive%20Model/budget_model.dart';
-import 'package:first_project/Hive%20Model/expense.dart';
-import 'package:first_project/Notification%20System/budget_notifier_wrapper.dart';
-import 'package:first_project/Notification%20System/notification_system.dart';
-import 'package:first_project/Notification%20System/work_manager.dart';
+import 'package:first_project/Hive Model/budget_model.dart';
+import 'package:first_project/Hive Model/expense.dart';
+import 'package:first_project/Notification System/budget_notifier_wrapper.dart';
+import 'package:first_project/Notification System/notification_system.dart';
+import 'package:first_project/Notification System/work_manager.dart';
 import 'package:first_project/Screens/Auth/Login_Screen.dart';
 import 'package:first_project/Screens/splash_screen.dart';
+import 'package:first_project/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:firebase_messaging/firebase_messaging.dart';
-//import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-//Notification Handler
-// Future<void> setupPushNotifications() async {
-//   FirebaseMessaging messaging = FirebaseMessaging.instance;
-
-//   await messaging.requestPermission();
-
-//   String? token = await messaging.getToken();
-//   print("FCM Token: $token");
-
-//   // Save token to Firestore under the user's document
-//   final user = FirebaseAuth.instance.currentUser;
-//   if (user != null && token != null) {
-//     await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
-//       'fcmToken': token,
-//     });
-//   }
-
-//   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-//     print('Message received in foreground: ${message.notification?.title}');
-//   });
-// }
 
 Future<void> requestNotificationPermission() async {
   final status = await Permission.notification.status;
@@ -59,31 +37,62 @@ void main() async {
 
   final expenseBox = await Hive.openBox<Expense>('expenses');
   await Hive.openBox<BudgetModel>('budgetBox');
-
-  runApp(MyApp(expenseBox: expenseBox));
-  // NotificationHelper.showNotification(
-  //   "Test Notification",
-  //   "This is a test alert from foreground.",
-  // );
+  final settingsBox = await Hive.openBox('settings');
+  final languageCode = settingsBox.get('languageCode') as String?;
+  Locale? savedLocale;
+  if (languageCode != null) {
+    savedLocale = Locale(languageCode);
+  }
+  runApp(MyApp(expenseBox: expenseBox, savedLocale: savedLocale));
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   final Box<Expense> expenseBox;
+  final Locale? savedLocale;
 
-  const MyApp({super.key, required this.expenseBox});
+  const MyApp({super.key, required this.expenseBox, this.savedLocale});
 
   @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+  @override
+  void initState() {
+    super.initState();
+    _locale = widget.savedLocale ?? const Locale('en');
+  }
+
+  void _setLocale(Locale locale) async {
+    setState(() {
+      _locale = locale;
+    });
+    final settingsBox = Hive.box('settings');
+    await settingsBox.put('languageCode', locale.languageCode);
+  }
+
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => ExpenseCubit(expenseBox)..loadExpenses()),
+        BlocProvider(
+          create: (_) => ExpenseCubit(widget.expenseBox)..loadExpenses(),
+        ),
         BlocProvider(create: (_) => BudgetCubit()),
       ],
       child: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
           return MaterialApp(
+            locale: _locale,
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
             debugShowCheckedModeBanner: false,
             home: _handleAuth(snapshot),
           );
@@ -98,7 +107,7 @@ class MyApp extends StatelessWidget {
     } else if (snapshot.hasData) {
       return const BudgetNotifierWrapper();
     } else {
-      return LoginScreen(); // Not logged in
+      return LoginScreen(setLocale: _setLocale);
     }
   }
 }
