@@ -1,0 +1,10 @@
+{
+  "@@locale": "fr",
+  "signin": "Se connecter",
+  "enterYourEmail": "Entrez votre e-mail",
+  "password": "Mot de passe",
+  "rememberMe": "Se souvenir de moi",
+  "signUp": "S'inscrire",
+  "logIn": "Connexion",
+  "selectLanguage": "Choisir la langue"
+}
