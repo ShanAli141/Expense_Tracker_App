@@ -6,8 +6,8 @@ import 'package:first_project/Bloc/expense_cubit.dart';
 import 'package:first_project/Bloc/theme_cubit.dart';
 import 'package:first_project/Screens/Profile/profile_screen.dart';
 import 'package:first_project/Screens/manage_expense.dart' show ManageExpense;
-import 'package:first_project/Screens/placeholder.dart';
-import 'package:first_project/Widgets/main_screen.dart';
+import 'package:first_project/Screens/Reports.dart';
+import 'package:first_project/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'add_expense_screen.dart';
@@ -27,7 +27,7 @@ class _ExpenseHomeState extends State<ExpenseHome> {
   final List<Widget> _pages = [
     const MainScreen(),
     const ManageExpense(title: 'Manage'), // Main list screen
-    const PlaceholderScreen(title: 'Reports'),
+    const ReportPage(title: 'Reports'),
     const ProfileScreen(title: 'Settings'),
   ];
 
@@ -52,6 +52,8 @@ class _ExpenseHomeState extends State<ExpenseHome> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      //backgroundColor: Colors.white,
       appBar: AppBar(
         title: Padding(
           padding: const EdgeInsets.only(left: 60),
@@ -60,7 +62,7 @@ class _ExpenseHomeState extends State<ExpenseHome> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
-        backgroundColor: const Color.fromARGB(255, 228, 165, 72),
+        //backgroundColor: Theme.of(context).colorScheme.primary,
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: IconButton(
@@ -78,12 +80,12 @@ class _ExpenseHomeState extends State<ExpenseHome> {
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         selectedItemColor: const Color.fromARGB(255, 228, 165, 72),
-        unselectedItemColor: const Color.fromARGB(255, 228, 165, 72),
+        unselectedItemColor: const Color.fromARGB(255, 116, 112, 107),
         selectedIconTheme: IconThemeData(size: 30),
         unselectedIconTheme: IconThemeData(size: 24),
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
+            icon: Icon(Icons.house_rounded),
             label: 'Home',
           ),
           BottomNavigationBarItem(

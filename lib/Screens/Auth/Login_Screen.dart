@@ -27,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen>
   late Animation<double> _fadeAnimation;
   late Animation<double> _logoScaleAnimation;
   String _errorMessage = '';
+  bool _isObscure = true; // State for password visibility
+  bool _rememberMe = false; // State for remember me checkbox
 
   @override
   void initState() {
@@ -62,47 +64,6 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  // Future<void> _authenticate(BuildContext context) async {
-  //   try {
-  //     bool canCheckBiometrics = await auth.canCheckBiometrics;
-  //     bool isDeviceSupported = await auth.isDeviceSupported();
-  //     List<BiometricType> availableBiometrics = await auth
-  //         .getAvailableBiometrics();
-
-  //     if (!canCheckBiometrics ||
-  //         !isDeviceSupported ||
-  //         availableBiometrics.isEmpty) {
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         const SnackBar(
-  //           content: Text('No biometric data enrolled on this device'),
-  //           backgroundColor: Colors.red,
-  //         ),
-  //       );
-  //       return;
-  //     }
-
-  //     bool isAuthenticated = await auth.authenticate(
-  //       localizedReason: 'Scan your fingerprint to login',
-  //       options: const AuthenticationOptions(
-  //         biometricOnly: true,
-  //         stickyAuth: true,
-  //       ),
-  //     );
-
-  //     if (isAuthenticated && context.mounted) {
-  //       WidgetsBinding.instance.addPostFrameCallback((_) {
-  //         Navigator.pushReplacement(
-  //           context,
-  //           MaterialPageRoute(builder: (context) => const ExpenseHome()),
-  //         );
-  //       });
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       _errorMessage = 'Authentication failed: $e';
-  //     });
-  //   }
-  // }
   void toggleAppTheme(BuildContext context) {
     context.read<ThemeCubit>().toggleTheme();
   }
@@ -111,8 +72,7 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue.shade100,
-        title: const SizedBox(), // remove center title
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: IconButton(
@@ -120,6 +80,7 @@ class _LoginScreenState extends State<LoginScreen>
               context.watch<ThemeCubit>().state == ThemeMode.dark
                   ? Icons.dark_mode
                   : Icons.light_mode,
+              color: Theme.of(context).colorScheme.onPrimary,
             ),
             onPressed: () => toggleAppTheme(context),
           ),
@@ -129,32 +90,41 @@ class _LoginScreenState extends State<LoginScreen>
             padding: const EdgeInsets.only(right: 12),
             child: Builder(
               builder: (context) => IconButton(
-                icon: const Icon(Icons.language, size: 30),
+                icon: Icon(
+                  Icons.language,
+                  size: 30,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
                 onPressed: () async {
                   final selected = await showDialog<Locale>(
                     context: context,
                     builder: (context) => SimpleDialog(
                       title: Text(AppLocalizations.of(context)!.selectLanguage),
                       children: [
-                        SimpleDialogOption(
-                          child: const Text('English'),
-                          onPressed: () =>
-                              Navigator.pop(context, const Locale('en')),
+                        RadioListTile<Locale>(
+                          title: const Text('English'),
+                          value: const Locale('en'),
+                          groupValue: Localizations.localeOf(context),
+                          onChanged: (Locale? value) =>
+                              Navigator.pop(context, value),
                         ),
-                        SimpleDialogOption(
-                          child: const Text('اردو'),
-                          onPressed: () =>
-                              Navigator.pop(context, const Locale('ur')),
+                        RadioListTile<Locale>(
+                          title: const Text('اردو'),
+                          value: const Locale('ur'),
+                          groupValue: Localizations.localeOf(context),
+                          onChanged: (Locale? value) =>
+                              Navigator.pop(context, value),
                         ),
-                        SimpleDialogOption(
-                          child: const Text('French'),
-                          onPressed: () =>
-                              Navigator.pop(context, const Locale('fr')),
+                        RadioListTile<Locale>(
+                          title: const Text('French'),
+                          value: const Locale('fr'),
+                          groupValue: Localizations.localeOf(context),
+                          onChanged: (Locale? value) =>
+                              Navigator.pop(context, value),
                         ),
                       ],
                     ),
                   );
-
                   if (selected != null) {
                     widget.setLocale?.call(selected);
                   }
@@ -164,194 +134,192 @@ class _LoginScreenState extends State<LoginScreen>
           ),
         ],
       ),
-
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Colors.blue.shade100, Colors.white],
+            colors: [
+              Theme.of(
+                context,
+              ).colorScheme.primary, // Match app's primary gradient
+              Theme.of(
+                context,
+              ).colorScheme.background, // Match app's background
+            ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 60),
-              ScaleTransition(
-                scale: _logoScaleAnimation,
-                child: Image.asset(
-                  "assets/images/logo.png",
-                  width: 180,
-                  height: 180,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.error, size: 180, color: Colors.red),
-                ),
-              ),
-              FadeTransition(
-                opacity: _fadeAnimation,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 20,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 0),
+                ScaleTransition(
+                  scale: _logoScaleAnimation,
+                  child: Image.asset(
+                    "assets/images/logo.png",
+                    width: 180,
+                    height: 180,
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.error,
+                      size: 180,
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      if (_errorMessage.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            _errorMessage,
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 14,
+                ),
+                FadeTransition(
+                  opacity: _fadeAnimation,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        if (_errorMessage.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              _errorMessage,
+                              style: TextStyle(
+                                color: Theme.of(context).colorScheme.error,
+                                fontSize: 14,
+                              ),
                             ),
                           ),
-                        ),
-                      Text(
-                        AppLocalizations.of(context)!.signin,
-                        style: const TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Enter your RCL Number and password to access Dashboard',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 16, color: Colors.grey),
-                      ),
-                      const SizedBox(height: 20),
-                      _buildTextField(
-                        controller: emailController,
-                        label: 'Enter your Email',
-                        hint: 'agent234@remitchoice.email',
-                      ),
-                      const SizedBox(height: 20),
-                      _buildTextField(
-                        controller: passwordController,
-                        label: 'Password',
-                        hint: 'Remit@1234',
-                        obscureText: true,
-                        suffixIcon: const Icon(Icons.visibility),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: false,
-                                onChanged: (value) {},
-                                activeColor: Colors.blue,
-                              ),
-                              Text(AppLocalizations.of(context)!.rememberMe),
-                            ],
+                        Text(
+                          AppLocalizations.of(context)!.signin,
+                          style: TextStyle(
+                            fontSize: 28,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary,
                           ),
-                          TextButton(
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Enter your RCL Number and password to access Dashboard',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTextField(
+                          controller: emailController,
+                          label: 'Enter your Email',
+                          hint: 'agent234@remitchoice.email',
+                        ),
+                        const SizedBox(height: 20),
+                        _buildTextField(
+                          controller: passwordController,
+                          label: 'Password',
+                          hint: 'Remit@1234',
+                          obscureText: _isObscure,
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _isObscure
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
                             onPressed: () {
-                              try {
-                                Navigator.push(
+                              setState(() {
+                                _isObscure = !_isObscure;
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              children: [
+                                Checkbox(
+                                  value: _rememberMe,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _rememberMe = value ?? false;
+                                    });
+                                  },
+                                  activeColor: Theme.of(
+                                    context,
+                                  ).colorScheme.primary,
+                                ),
+                                Text(AppLocalizations.of(context)!.rememberMe),
+                              ],
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                try {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const SignupScreen(),
+                                    ),
+                                  );
+                                } catch (e) {
+                                  setState(() {
+                                    _errorMessage = 'Navigation error: $e';
+                                  });
+                                }
+                              },
+                              child: Text(
+                                AppLocalizations.of(context)!.signUp,
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        AnimatedScaleButton(
+                          text: AppLocalizations.of(context)!.logIn,
+                          onPressed: () async {
+                            try {
+                              final email = emailController.text.trim();
+                              final password = passwordController.text.trim();
+                              if (email.isEmpty || password.isEmpty) {
+                                setState(() {
+                                  _errorMessage =
+                                      'Please enter email and password';
+                                });
+                                return;
+                              }
+                              final credential = await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                    email: email,
+                                    password: password,
+                                  );
+                              if (context.mounted) {
+                                Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => const SignupScreen(),
+                                    builder: (context) => const ExpenseHome(),
                                   ),
                                 );
-                              } catch (e) {
-                                setState(() {
-                                  _errorMessage = 'Navigation error: $e';
-                                });
                               }
-                            },
-                            child: Text(
-                              AppLocalizations.of(context)!.signUp,
-                              style: const TextStyle(color: Colors.blue),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 20),
-                      //=========Login Button=====================
-                      AnimatedScaleButton(
-                        text: AppLocalizations.of(context)!.logIn,
-                        onPressed: () async {
-                          try {
-                            final email = emailController.text.trim();
-                            final password = passwordController.text.trim();
-                            if (email.isEmpty || password.isEmpty) {
+                            } catch (e) {
                               setState(() {
-                                _errorMessage =
-                                    'Please enter email and password';
+                                _errorMessage = 'Login failed: $e';
                               });
-                              return;
                             }
-                            final credential = await FirebaseAuth.instance
-                                .signInWithEmailAndPassword(
-                                  email: email,
-                                  password: password,
-                                );
-                            if (context.mounted) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const ExpenseHome(),
-                                ),
-                              );
-                            }
-                          } catch (e) {
-                            setState(() {
-                              _errorMessage = 'Login failed: $e';
-                            });
-                          }
-                        },
-                      ),
-                      const SizedBox(height: 20),
-                      //======Language Button===============================
-                      // AnimatedScaleButton(
-                      //   text: AppLocalizations.of(context)!.selectLanguage,
-                      //   onPressed: () async {
-                      //     final selected = await showDialog<Locale>(
-                      //       context: context,
-                      //       builder: (context) => SimpleDialog(
-                      //         title: const Text('Choose Language'),
-                      //         children: [
-                      //           SimpleDialogOption(
-                      //             child: const Text('English'),
-                      //             onPressed: () => Navigator.pop(
-                      //               context,
-                      //               const Locale('en'),
-                      //             ),
-                      //           ),
-                      //           SimpleDialogOption(
-                      //             child: const Text('اردو'),
-                      //             onPressed: () => Navigator.pop(
-                      //               context,
-                      //               const Locale('ur'),
-                      //             ),
-                      //           ),
-                      //           SimpleDialogOption(
-                      //             child: const Text('French'),
-                      //             onPressed: () => Navigator.pop(
-                      //               context,
-                      //               const Locale('fr'),
-                      //             ),
-                      //           ),
-                      //         ],
-                      //       ),
-                      //     );
-
-                      //     if (selected != null) {
-                      //       widget.setLocale?.call(selected);
-                      //     }
-                      //   },
-                      // ),
-                    ],
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -367,18 +335,18 @@ class _LoginScreenState extends State<LoginScreen>
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.shade300,
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
             offset: const Offset(4, 4),
             blurRadius: 10,
             spreadRadius: 1,
           ),
-          const BoxShadow(
-            color: Colors.white,
-            offset: Offset(-4, -4),
+          BoxShadow(
+            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.2),
+            offset: const Offset(-4, -4),
             blurRadius: 10,
             spreadRadius: 1,
           ),
@@ -392,25 +360,29 @@ class _LoginScreenState extends State<LoginScreen>
           hintText: hint,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.grey), // visible border
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.grey),
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: Colors.blue,
-            ), // color when focused
+            borderSide: BorderSide(
+              color: Theme.of(context).colorScheme.primary,
+            ),
           ),
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,
             vertical: 12,
           ),
           suffixIcon: suffixIcon,
-          labelStyle: const TextStyle(color: Colors.grey),
-          hintStyle: const TextStyle(color: Colors.grey),
+          labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
       ),
     );
@@ -488,14 +460,14 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton>
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
-              foregroundColor: Colors.white,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.onPrimary,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 0,
-              shadowColor: Colors.blueAccent,
+              shadowColor: Theme.of(context).colorScheme.primary,
             ),
           ),
         );

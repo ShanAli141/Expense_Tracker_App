@@ -34,9 +34,11 @@ class _ManageExpenseState extends State<ManageExpense>
       );
       _animationController.forward();
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Initialization error: $e';
-      });
+      if (mounted) {
+        setState(() {
+          _errorMessage = 'Initialization error: $e';
+        });
+      }
     }
   }
 
@@ -109,13 +111,17 @@ class _ManageExpenseState extends State<ManageExpense>
                         try {
                           final value = double.tryParse(_budgetController.text);
                           if (value == null || value <= 0) {
-                            setState(() {
-                              _errorMessage =
-                                  'Please enter a valid positive number';
-                            });
+                            if (mounted) {
+                              setState(() {
+                                _errorMessage =
+                                    'Please enter a valid positive number';
+                              });
+                            }
                             return;
                           }
+
                           context.read<BudgetCubit>().updateBudget(value);
+
                           final user = FirebaseAuth.instance.currentUser;
                           if (user != null) {
                             await FirebaseFirestore.instance
@@ -124,19 +130,26 @@ class _ManageExpenseState extends State<ManageExpense>
                                 .set({
                                   'monthlyBudget': value,
                                 }, SetOptions(merge: true));
-                            setState(() {
-                              _errorMessage = '';
-                            });
-                            _animationController.forward(from: 0);
+
+                            if (mounted) {
+                              setState(() {
+                                _errorMessage = '';
+                              });
+                              _animationController.forward(from: 0);
+                            }
                           } else {
-                            setState(() {
-                              _errorMessage = 'User not logged in';
-                            });
+                            if (mounted) {
+                              setState(() {
+                                _errorMessage = 'User not logged in';
+                              });
+                            }
                           }
                         } catch (e) {
-                          setState(() {
-                            _errorMessage = 'Error updating budget: $e';
-                          });
+                          if (mounted) {
+                            setState(() {
+                              _errorMessage = 'Error updating budget: $e';
+                            });
+                          }
                         }
                       },
                     ),
