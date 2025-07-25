@@ -11,12 +11,12 @@ class UserInfoSection extends StatelessWidget {
       children: [
         Text(
           'Name: ${user.displayName ?? 'No name set'}',
-          style: const TextStyle(fontSize: 18, color: Colors.black),
+          style: const TextStyle(fontSize: 18),
         ),
         const SizedBox(height: 10),
         Text(
           'Email: ${user.email ?? 'No email'}',
-          style: const TextStyle(fontSize: 18, color: Colors.black),
+          style: const TextStyle(fontSize: 18),
         ),
       ],
     );

@@ -8,16 +8,13 @@ class TouchIdSwitch extends StatelessWidget {
     return ListTile(
       leading: const Icon(
         Icons.verified_user,
-        color: Color.fromARGB(255, 71, 112, 189),
+        color: Color.fromARGB(255, 228, 165, 72),
       ),
-      title: const Text(
-        'Login with Touch Id',
-        style: TextStyle(color: Colors.black),
-      ),
+      title: const Text('Login with Touch Id'),
       trailing: Switch(
         value: false,
         onChanged: (_) {},
-        activeColor: const Color.fromARGB(255, 71, 112, 189),
+        activeColor: Color.fromARGB(255, 228, 165, 72),
       ),
     );
   }

@@ -17,10 +17,10 @@ class ProfileOptions extends StatelessWidget {
     return ExpansionTile(
       leading: const Icon(
         Icons.person,
-        color: Color.fromARGB(255, 71, 112, 189),
+        color: Color.fromARGB(255, 228, 165, 72),
       ),
-      title: const Text('Profile', style: TextStyle(color: Colors.black)),
-      collapsedIconColor: const Color.fromARGB(255, 71, 112, 189),
+      title: const Text('Profile'),
+      collapsedIconColor: const Color.fromARGB(255, 228, 165, 72),
       children: [
         // ProfileOptionTile(
         //   icon: Icons.verified_user,

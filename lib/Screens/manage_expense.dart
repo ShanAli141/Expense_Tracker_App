@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_types_as_parameter_names
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/Bloc/budget_cubit.dart';
@@ -52,14 +54,9 @@ class _ManageExpenseState extends State<ManageExpense>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: use Theme.of(context).scaffoldBackgroundColor
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.grey.shade100, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
+        // Use Theme.of(context).canvasColor or similar for default compatibility
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: FadeTransition(
@@ -72,53 +69,36 @@ class _ManageExpenseState extends State<ManageExpense>
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Text(
                       _errorMessage,
-                      style: const TextStyle(color: Colors.red, fontSize: 14),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
-                const Text(
+                Text(
                   "Set Monthly Budget",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.teal,
+                    // Use Theme.of(context).textTheme.titleLarge.color
                   ),
                 ),
                 const SizedBox(height: 15),
                 Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.shade300,
-                              offset: const Offset(4, 4),
-                              blurRadius: 10,
-                              spreadRadius: 1,
-                            ),
-                            const BoxShadow(
-                              color: Colors.white,
-                              offset: Offset(-4, -4),
-                              blurRadius: 10,
-                              spreadRadius: 1,
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _budgetController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: "Enter monthly budget",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
+                      child: TextField(
+                        controller: _budgetController,
+                        keyboardType: TextInputType.number,
+                        decoration: InputDecoration(
+                          hintText: "Enter monthly budget",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
                           ),
                         ),
                       ),
@@ -172,7 +152,7 @@ class _ManageExpenseState extends State<ManageExpense>
                           if (state is ExpenseLoaded) {
                             spent = state.expenses.fold(
                               0.0,
-                              (sum, e) => sum + (e.amount ?? 0.0),
+                              (sum, e) => sum + (e.amount),
                             );
                           }
                         } catch (e) {
@@ -187,33 +167,33 @@ class _ManageExpenseState extends State<ManageExpense>
 
                         return Container(
                           padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.shade300,
-                                offset: const Offset(4, 4),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                              const BoxShadow(
-                                color: Colors.white,
-                                offset: Offset(-4, -4),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                              ),
-                            ],
-                          ),
+                          // decoration: BoxDecoration(
+                          //   // Use Theme.of(context).cardColor
+                          //   borderRadius: BorderRadius.circular(16),
+                          //   boxShadow: [
+                          //     BoxShadow(
+                          //       // Use Theme.of(context).shadowColor
+                          //       offset: const Offset(4, 4),
+                          //       blurRadius: 10,
+                          //       spreadRadius: 1,
+                          //     ),
+                          //     BoxShadow(
+                          //       // Use Theme.of(context).shadowColor
+                          //       offset: const Offset(-4, -4),
+                          //       blurRadius: 10,
+                          //       spreadRadius: 1,
+                          //     ),
+                          //   ],
+                          // ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Monthly Budget: PKR ${budget.toStringAsFixed(0)}",
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.teal,
+                                  // Use Theme.of(context).colorScheme.primary
                                 ),
                               ),
                               const SizedBox(height: 8),
@@ -225,9 +205,7 @@ class _ManageExpenseState extends State<ManageExpense>
                                 "Remaining: PKR ${remaining < 0 ? 0 : remaining.toStringAsFixed(0)}",
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: remaining < 0
-                                      ? Colors.red
-                                      : Colors.teal,
+                                  // Use Theme.of(context).colorScheme.primary
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -235,19 +213,17 @@ class _ManageExpenseState extends State<ManageExpense>
                               LinearProgressIndicator(
                                 value: progress,
                                 minHeight: 12,
-                                backgroundColor: Colors.grey.shade200,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  progress >= 1 ? Colors.red : Colors.teal,
-                                ),
+                                // Use Theme.of(context).colorScheme.background
+                                // Use Theme.of(context).colorScheme.primary
                                 borderRadius: BorderRadius.circular(6),
                               ),
                               if (progress >= 1)
-                                const Padding(
-                                  padding: EdgeInsets.only(top: 12),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 12),
                                   child: Text(
                                     "⚠ Budget Exceeded!",
                                     style: TextStyle(
-                                      color: Colors.red,
+                                      // Use Theme.of(context).colorScheme.error
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
                                     ),
@@ -328,14 +304,14 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton>
               }
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.lightBlueAccent,
-              foregroundColor: Colors.white,
+              // Use Theme.of(context).colorScheme.primary
+              // Use Theme.of(context).colorScheme.onPrimary
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
               elevation: 0,
-              shadowColor: Colors.tealAccent,
+              // Use Theme.of(context).colorScheme.primaryVariant
             ),
             child: const Text(
               "Set",

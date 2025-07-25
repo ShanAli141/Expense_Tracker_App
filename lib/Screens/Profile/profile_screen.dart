@@ -24,7 +24,7 @@ class ProfileScreen extends StatelessWidget {
                   const Icon(
                     Icons.account_circle,
                     size: 100,
-                    color: Color.fromARGB(255, 71, 112, 189),
+                    color: Color.fromARGB(255, 228, 165, 72),
                   ),
                   const SizedBox(height: 20),
                   UserInfoSection(user: user),

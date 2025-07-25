@@ -15,8 +15,8 @@ class ProfileOptionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon, color: const Color.fromARGB(255, 71, 112, 189)),
-      title: Text(label, style: const TextStyle(color: Colors.black)),
+      leading: Icon(icon, color: const Color.fromARGB(255, 228, 165, 72)),
+      title: Text(label),
       onTap: onTap, // <-- Fix: Apply onTap here
     );
   }

@@ -1,10 +1,12 @@
 // ignore_for_file: use_build_context_synchronously, file_names, avoid_print, unused_local_variable
 
+import 'package:first_project/Bloc/theme_cubit.dart';
 import 'package:first_project/Screens/Auth/Signup_Screen.dart';
 import 'package:first_project/Screens/expense_home.dart';
 import 'package:first_project/l10n/app_localizations.dart'
     show AppLocalizations;
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -101,6 +103,9 @@ class _LoginScreenState extends State<LoginScreen>
   //     });
   //   }
   // }
+  void toggleAppTheme(BuildContext context) {
+    context.read<ThemeCubit>().toggleTheme();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -111,10 +116,12 @@ class _LoginScreenState extends State<LoginScreen>
         leading: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: IconButton(
-            icon: const Icon(Icons.dark_mode, size: 30),
-            onPressed: () {
-              // TODO: Add dark mode toggle
-            },
+            icon: Icon(
+              context.watch<ThemeCubit>().state == ThemeMode.dark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            onPressed: () => toggleAppTheme(context),
           ),
         ),
         actions: [

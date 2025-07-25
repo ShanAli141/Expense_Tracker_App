@@ -74,7 +74,7 @@ class _MainScreenState extends State<MainScreen> {
                             hintText: 'Search by name',
                             prefixIcon: const Icon(Icons.search),
                             filled: true,
-                            fillColor: Colors.grey[200],
+                            //fillColor: Colors.black,
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(12),
                               borderSide: BorderSide.none,
@@ -90,7 +90,7 @@ class _MainScreenState extends State<MainScreen> {
                       const SizedBox(width: 10),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.blueAccent,
+                          color: const Color.fromARGB(255, 228, 165, 72),
                           borderRadius: BorderRadius.circular(12),
                         ),
                         child: IconButton(
@@ -176,7 +176,7 @@ class _MainScreenState extends State<MainScreen> {
                                       subtitle: Text(
                                         '${expense.date.toLocal().toString().split(" ")[0]} • ${expense.purpose}',
                                         style: const TextStyle(
-                                          color: Colors.black,
+                                          //color: Colors.black,
                                         ),
                                       ),
                                       trailing: Row(
