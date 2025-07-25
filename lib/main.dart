@@ -98,8 +98,26 @@ class _MyAppState extends State<MyApp> {
                   GlobalCupertinoLocalizations.delegate,
                 ],
                 debugShowCheckedModeBanner: false,
-                theme: ThemeData.light(), // Light theme
-                darkTheme: ThemeData.dark(), // Dark theme
+                theme: ThemeData(
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: Colors.blue,
+                    brightness: Brightness.light,
+                    primary: Color(0xFF4A90E2),
+                    background: Colors.white,
+                    surface: Colors.white,
+                    onTertiary: Colors.black,
+                  ),
+                ), // Light theme
+                darkTheme: ThemeData(
+                  colorScheme: ColorScheme.fromSeed(
+                    seedColor: Colors.orange,
+                    brightness: Brightness.dark,
+                    primary: const Color.fromARGB(255, 229, 231, 122),
+                    background: Color(0xFF121212),
+                    surface: Color(0xFF1E1E1E),
+                    onTertiary: Colors.white,
+                  ),
+                ), // Dark theme
                 themeMode: context.watch<ThemeCubit>().state,
                 // Uses Bloc state
                 home: _handleAuth(snapshot),

@@ -116,10 +116,10 @@ class _MainScreenState extends State<MainScreen> {
                           _maxPrice = null;
                         });
                       },
-                      child: const Text(
+                      child: Text(
                         'Clear All',
                         style: TextStyle(
-                          color: Colors.red,
+                          color: Theme.of(context).colorScheme.onTertiary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
