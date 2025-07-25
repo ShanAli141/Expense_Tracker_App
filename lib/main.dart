@@ -1,5 +1,6 @@
 import 'package:first_project/Bloc/budget_cubit.dart';
 import 'package:first_project/Bloc/expense_cubit.dart';
+import 'package:first_project/Bloc/theme_cubit.dart';
 import 'package:first_project/Hive Model/budget_model.dart';
 import 'package:first_project/Hive Model/expense.dart';
 import 'package:first_project/Notification System/budget_notifier_wrapper.dart';
@@ -80,21 +81,30 @@ class _MyAppState extends State<MyApp> {
           create: (_) => ExpenseCubit(widget.expenseBox)..loadExpenses(),
         ),
         BlocProvider(create: (_) => BudgetCubit()),
+        BlocProvider(create: (_) => ThemeCubit()),
       ],
-      child: StreamBuilder<User?>(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          return MaterialApp(
-            locale: _locale,
-            supportedLocales: AppLocalizations.supportedLocales,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-            debugShowCheckedModeBanner: false,
-            home: _handleAuth(snapshot),
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return StreamBuilder<User?>(
+            stream: FirebaseAuth.instance.authStateChanges(),
+            builder: (context, snapshot) {
+              return MaterialApp(
+                locale: _locale,
+                supportedLocales: AppLocalizations.supportedLocales,
+                localizationsDelegates: const [
+                  AppLocalizations.delegate,
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                debugShowCheckedModeBanner: false,
+                theme: ThemeData.light(), // Light theme
+                darkTheme: ThemeData.dark(), // Dark theme
+                themeMode: context.watch<ThemeCubit>().state,
+                // Uses Bloc state
+                home: _handleAuth(snapshot),
+              );
+            },
           );
         },
       ),

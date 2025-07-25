@@ -8,14 +8,13 @@ class CreditInfoTile extends StatelessWidget {
     return const ListTile(
       leading: Icon(
         Icons.account_balance_wallet,
-        color: Color.fromARGB(255, 71, 112, 189),
+        color: Color.fromARGB(255, 228, 165, 72),
       ),
-      title: Text('AVAILABLE CREDIT', style: TextStyle(color: Colors.black)),
+      title: Text('AVAILABLE CREDIT'),
       subtitle: Text(
         '0.00\nyou can redeem your credit while sending payments.',
-        style: TextStyle(color: Colors.black54),
       ),
-      tileColor: Color(0xFFF5F5F5),
+      tileColor: Color.fromARGB(104, 148, 136, 136),
     );
   }
 }

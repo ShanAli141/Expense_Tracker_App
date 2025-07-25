@@ -3,6 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:first_project/Bloc/expense_cubit.dart';
+import 'package:first_project/Bloc/theme_cubit.dart';
 import 'package:first_project/Screens/Profile/profile_screen.dart';
 import 'package:first_project/Screens/manage_expense.dart' show ManageExpense;
 import 'package:first_project/Screens/placeholder.dart';
@@ -36,6 +37,10 @@ class _ExpenseHomeState extends State<ExpenseHome> {
     });
   }
 
+  void toggleAppTheme(BuildContext context) {
+    context.read<ThemeCubit>().toggleTheme();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -48,18 +53,32 @@ class _ExpenseHomeState extends State<ExpenseHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Expense Tracker",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        title: Padding(
+          padding: const EdgeInsets.only(left: 60),
+          child: Text(
+            "Expense Tracker",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
         ),
-        backgroundColor: Colors.blue,
+        backgroundColor: const Color.fromARGB(255, 228, 165, 72),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12),
+          child: IconButton(
+            icon: Icon(
+              context.watch<ThemeCubit>().state == ThemeMode.dark
+                  ? Icons.dark_mode
+                  : Icons.light_mode,
+            ),
+            onPressed: () => toggleAppTheme(context),
+          ),
+        ),
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.blueGrey,
+        selectedItemColor: const Color.fromARGB(255, 228, 165, 72),
+        unselectedItemColor: const Color.fromARGB(255, 228, 165, 72),
         selectedIconTheme: IconThemeData(size: 30),
         unselectedIconTheme: IconThemeData(size: 24),
         items: const [
@@ -91,7 +110,7 @@ class _ExpenseHomeState extends State<ExpenseHome> {
                 );
               },
               child: const Icon(Icons.add),
-              backgroundColor: Colors.blue,
+              backgroundColor: const Color.fromARGB(255, 228, 165, 72),
             )
           : null,
     );
