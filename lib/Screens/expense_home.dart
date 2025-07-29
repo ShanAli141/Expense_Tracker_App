@@ -55,17 +55,19 @@ class _ExpenseHomeState extends State<ExpenseHome> {
       //backgroundColor: Theme.of(context).colorScheme.onPrimary,
       //backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.only(left: 60),
-          child: Text(
-            "Expense Tracker",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+        leading: IconButton(
+          icon: Icon(Icons.language),
+          onPressed: () {
+            // Handle language change
+          },
         ),
-        //backgroundColor: Theme.of(context).colorScheme.primary,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 12),
-          child: IconButton(
+        title: Text(
+          "Expense Tracker",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true, // Ensures title stays centered
+        actions: [
+          IconButton(
             icon: Icon(
               context.watch<ThemeCubit>().state == ThemeMode.dark
                   ? Icons.dark_mode
@@ -73,8 +75,9 @@ class _ExpenseHomeState extends State<ExpenseHome> {
             ),
             onPressed: () => toggleAppTheme(context),
           ),
-        ),
+        ],
       ),
+
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
