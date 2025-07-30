@@ -180,24 +180,6 @@ class _ManageExpenseState extends State<ManageExpense>
 
                         return Container(
                           padding: const EdgeInsets.all(16),
-                          // decoration: BoxDecoration(
-                          //   // Use Theme.of(context).cardColor
-                          //   borderRadius: BorderRadius.circular(16),
-                          //   boxShadow: [
-                          //     BoxShadow(
-                          //       // Use Theme.of(context).shadowColor
-                          //       offset: const Offset(4, 4),
-                          //       blurRadius: 10,
-                          //       spreadRadius: 1,
-                          //     ),
-                          //     BoxShadow(
-                          //       // Use Theme.of(context).shadowColor
-                          //       offset: const Offset(-4, -4),
-                          //       blurRadius: 10,
-                          //       spreadRadius: 1,
-                          //     ),
-                          //   ],
-                          // ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
